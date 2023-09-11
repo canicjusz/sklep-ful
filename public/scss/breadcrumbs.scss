@@ -1,0 +1,36 @@
+@use "abstracts/fonts";
+@use "abstracts/variables";
+.breadcrumb {
+  margin: 0;
+}
+ul.breadcrumb {
+  list-style: none;
+  background-color: #f2f3f5;
+  width: 100%;
+  padding: 10px 0px;
+  padding-left: 31px;
+}
+
+ul.breadcrumb li {
+  display: inline;
+  font-size: 12px;
+  font-family: "Metropolis", sans-serif;
+}
+
+ul.breadcrumb li + li:before {
+  padding: 10px;
+  color: #c5c6d0;
+  content: "—";
+  color: #e1e2e8;
+}
+
+ul.breadcrumb li a {
+  color: black;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+ul.breadcrumb li a:hover {
+  color: black;
+  text-decoration: underline;
+}

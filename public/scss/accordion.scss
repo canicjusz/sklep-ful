@@ -1,0 +1,120 @@
+@use "abstracts/fonts";
+@use "abstracts/variables";
+
+.sidebar {
+  font-family: "Metropolis", sans-serif;
+  width: 100%;
+  margin-bottom: 30px;
+
+  ol {
+    list-style-type: none;
+  }
+  ul {
+    list-style-type: none;
+  }
+
+  &__heading {
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #e1e2e8;
+    padding: 20px;
+    font-size: 15px;
+    font-weight: 700;
+    border-bottom: 2px solid #f74137;
+    margin: 0;
+  }
+
+  &__list {
+    box-sizing: border-box;
+    border-right: 1px solid #e1e2e8;
+    border-bottom: 1px solid #e1e2e8;
+    border-left: 1px solid #e1e2e8;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  &__listItem {
+    border-top: 1px solid #e1e2e8;
+  }
+
+  &__listItem:first-child {
+    border: none;
+  }
+
+  &__listItem:hover {
+    background-color: #f8f8f8;
+    transition: background-color 0.3s ease-out;
+  }
+
+  &__listItemAnchor {
+    padding: 20px;
+  }
+
+  &__listItemAnchor,
+  &__nestedListItemAnchor {
+    display: flex;
+    justify-content: space-between;
+    color: #323940;
+    text-decoration: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 400;
+    .plus {
+      background-color: #323940;
+      -webkit-mask-image: url(../static/plus.svg);
+      mask-image: url(../static/plus.svg);
+      height: 12px;
+      width: 12px;
+      fill: currentColor;
+      stroke: currentColor;
+    }
+
+    &--active {
+      color: #e30815;
+      font-weight: bold;
+    }
+
+    .minus {
+      background-color: #e30815;
+      -webkit-mask-image: url(../static/minus.svg);
+      mask-image: url(../static/minus.svg);
+      height: 12px;
+      width: 12px;
+      fill: currentColor;
+      stroke: currentColor;
+    }
+  }
+
+  &__nestedList {
+    margin: 0;
+    padding: 0;
+    display: block;
+
+    &--hidden {
+      display: none;
+    }
+  }
+
+  &__nestedListItem {
+    border-top: 1px solid #e1e2e8;
+    background-color: #f8f8f8;
+  }
+
+  &__nestedListItem:hover {
+    background-color: #e1e2e8;
+    transition: background-color 0.3s ease-out;
+  }
+
+  &__nestedListItemAnchor {
+    padding: 20px 40px 20px;
+  }
+
+  &__nestedListItemSpan {
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 400;
+  }
+}

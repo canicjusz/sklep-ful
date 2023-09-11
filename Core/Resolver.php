@@ -15,12 +15,13 @@ class Resolver
       }
       $class_name = $callback[0];
       $method = $callback[1];
-      $class = $namespace . $class_name;
-      $controller = new $class();
-      if (!method_exists($controller, $method)) {
+      $class_path = $namespace . $class_name;
+      // dwd($class_path);
+      $class = new $class_path();
+      if (!method_exists($class, $method)) {
         throw new \Exception("'$method' doesn't exist on the $class class.");
       }
-      $callback_array = [$controller, $method];
+      $callback_array = [$class, $method];
     }
     if (!is_callable($callback_array ?? $callback)) {
       throw new \Exception($exception_message);

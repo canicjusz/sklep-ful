@@ -1,0 +1,110 @@
+price-range {
+  position: relative;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  padding: 10px;
+}
+price-range .range__container {
+  position: relative;
+}
+price-range .range__track {
+  height: 4px;
+  width: var(--range-width);
+  background: #F6F7FB;
+  position: absolute;
+  top: 25px;
+  transform: translateY(-50%);
+}
+price-range .range__track-disabler {
+  z-index: 1;
+  position: absolute;
+  top: 10px;
+  height: 30px;
+  width: var(--range-width);
+}
+price-range .range__input {
+  margin: 0;
+  height: 30px;
+  width: 100%;
+  overflow: hidden;
+}
+price-range .range__input, price-range .range__input::-webkit-slider-runnable-track, price-range .range__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+price-range .range__input::-webkit-slider-thumb {
+  cursor: pointer;
+  z-index: 2;
+  background: #F74137;
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+price-range .range__input::-moz-range-thumb {
+  height: 4px;
+  background: #F74137;
+}
+price-range .range__input::-moz-range-progress, price-range .range__input::-ms-fill-lower {
+  background: #F74137;
+}
+price-range .range__input--max {
+  position: absolute;
+  left: 0;
+}
+price-range .range__input.range__input--min {
+  position: relative;
+}
+price-range .range__input.range__input--min::before {
+  z-index: 1;
+  height: 4px;
+  top: 15px;
+  width: var(--width);
+  transform: translateX(var(--left)) translateY(-50%);
+  display: block;
+  background: #F74137;
+  position: absolute;
+  content: "";
+}
+price-range .range__input.range__input--max::-webkit-slider-thumb {
+  z-index: 2;
+}
+price-range .range__input.range__input--max::after {
+  content: "";
+}
+price-range .range__value {
+  border-top: none;
+  border-bottom: none;
+  border: 2px solid #E1E2E8;
+  outline: none;
+  text-align: center;
+  font-family: "Metropolis", sans-serif;
+  opacity: 0.5;
+  font-size: 14px;
+  padding: 10px 5px;
+}
+price-range .range__value--max {
+  position: absolute;
+  right: 10px;
+}
+price-range .range__value::-webkit-outer-spin-button, price-range .range__value::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  display: none;
+}
+
+.pricerange__borders {
+  padding-top: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #e1e2e8;
+  border-top: none;
+}
+
+.pricerange__title {
+  margin-left: 20px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: "Metropolis", sans-serif;
+}
+
+/*# sourceMappingURL=price_range.css.map */

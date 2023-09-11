@@ -1,1 +1,6 @@
 przenieśß const'y z core do .env
+zrobić, żeby skrypty były niedostępne
+zrobić, żeby env było w sass'ie
+te env jakoś bardziej intuicijnie, ze slashami
+wszędzie typy
+fix querowania i wyroznianie na podstawie kategorii w module ProductDisplay, ma być tak jak w Similar

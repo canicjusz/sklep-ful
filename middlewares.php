@@ -1,8 +1,8 @@
 <?php
-
+// use Middleware\Auth;
 use Core\Middleware;
 
 Middleware::add(
-  'auth',
-  [Auth::class, 'index']
+  'redirectCategory',
+  [Redirect::class, 'category']
 );

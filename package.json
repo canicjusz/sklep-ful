@@ -1,0 +1,23 @@
+{
+  "name": "sklep-ful",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile-sass": "sass -w public/scss:public/css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/canicjusz/sklep-ful.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/canicjusz/sklep-ful/issues"
+  },
+  "homepage": "https://github.com/canicjusz/sklep-ful#readme",
+  "dependencies": {
+    "sass": "^1.64.2"
+  }
+}

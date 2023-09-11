@@ -1,0 +1,51 @@
+@use "abstracts/fonts";
+@use "abstracts/variables";
+
+.word-container {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  justify-content: space-between;
+}
+
+.word {
+  // margin-right: 175px;
+  // margin-left: 20px;
+}
+
+.remove-button {
+  cursor: pointer;
+  color: black;
+  background-color: #e1e2e8;
+  opacity: 1;
+  width: 25px;
+  height: 25px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.filtry-container {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: bisque;
+  // width: 298px;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  border: 1px solid #e1e2e8;
+  opacity: 1;
+  background-color: #f2f3f4;
+}
+.filtry {
+  width: 100%;
+  box-sizing: border-box;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  border: 1px solid #e1e2e8;
+  opacity: 1;
+  // width: 298px;
+  border-bottom: none;
+  font-weight: bold;
+}
+.appliedfilters__text {
+  font-size: 14px;
+  padding: 20px;
+}

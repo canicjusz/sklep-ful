@@ -1,0 +1,124 @@
+@use "abstracts/fonts";
+@use "abstracts/variables";
+
+a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+a:active {
+  text-decoration: none;
+}
+
+.tile {
+  &__content {
+    padding-left: 30px;
+    box-sizing: border-box;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+.tile__main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  aspect-ratio: 3/2;
+  position: relative;
+  overflow: hidden;
+
+  &:last-child {
+    @media (max-width: 1300px) {
+      aspect-ratio: auto;
+      grid-column: 1 / 3;
+    }
+    @media (max-width: 968px) {
+      grid-column: initial;
+    }
+  }
+}
+.tile__title {
+  font-family: "Metropolis", sans-serif;
+  font-size: 44px;
+  color: white;
+  font-weight: bold;
+}
+.tile__dsc {
+  margin: 5px 0 20px 0;
+  font-weight: 100;
+  font-size: 30px;
+  font-family: "Metropolis", sans-serif;
+  letter-spacing: 0px;
+  color: #ffffff;
+}
+.tile__image {
+  display: block;
+  object-fit: cover;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  transition: transform 450ms;
+  @media (max-width: 1300px) {
+    object-position: center top;
+  }
+}
+.tile__image--mask::after {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-image: linear-gradient(
+    to left,
+    rgba(255, 0, 0, 0),
+    rgba(0, 0, 0, 0.55)
+  );
+}
+.tile__main:hover .tile__image {
+  transform: scale(1.05);
+  z-index: 0;
+}
+.tile__button {
+  transition: border-color 0.3s, background-color 0.3s;
+  box-sizing: border-box;
+  width: 200px;
+  height: 55px;
+  border: 1px solid #ffffff;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Metropolis", sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  text-transform: uppercase;
+}
+.tile__button:hover {
+  background-color: #f74137;
+  border: none;
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .tile {
+    &__title {
+      font-size: 1.3em;
+    }
+
+    &__dsc {
+      font-size: 1.3em;
+    }
+  }
+}
