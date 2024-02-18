@@ -10,6 +10,7 @@ CREATE TABLE `product` (
   `delivery_ID` integer,
   `visible` boolean DEFAULT 1,
   `variant_group_ID` integer,
+  `manufacturer_ID` integer,
   `variant_name` varchar(255)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -84,15 +85,15 @@ ALTER TABLE `product_category` ADD FOREIGN KEY (`product_ID`) REFERENCES `produc
 
 ALTER TABLE `product_category` ADD FOREIGN KEY (`category_ID`) REFERENCES `category` (`ID`);
 
-CREATE TABLE `product_manufacturer` (
-  `product_ID` integer,
-  `manufacturer_ID` integer,
-  PRIMARY KEY (`product_ID`, `manufacturer_ID`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- CREATE TABLE `product_manufacturer` (
+--   `product_ID` integer,
+--   `manufacturer_ID` integer,
+--   PRIMARY KEY (`product_ID`, `manufacturer_ID`)
+-- ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-ALTER TABLE `product_manufacturer` ADD FOREIGN KEY (`product_ID`) REFERENCES `product` (`ID`);
+-- ALTER TABLE `product_manufacturer` ADD FOREIGN KEY (`product_ID`) REFERENCES `product` (`ID`);
 
-ALTER TABLE `product_manufacturer` ADD FOREIGN KEY (`manufacturer_ID`) REFERENCES `manufacturer` (`ID`);
+-- ALTER TABLE `product_manufacturer` ADD FOREIGN KEY (`manufacturer_ID`) REFERENCES `manufacturer` (`ID`);
 
 
 CREATE TABLE `product_parameter` (
@@ -130,6 +131,8 @@ ALTER TABLE `product_filter_value` ADD FOREIGN KEY (`filter_value_ID`) REFERENCE
 ALTER TABLE `product_image` ADD FOREIGN KEY (`product_ID`) REFERENCES `product` (`ID`);
 
 ALTER TABLE `product` ADD FOREIGN KEY (`delivery_ID`) REFERENCES `delivery` (`ID`);
+
+ALTER TABLE `product` ADD FOREIGN KEY (`manufacturer_ID`) REFERENCES `manufacturer` (`ID`);
 
 ALTER TABLE `filter_value` ADD FOREIGN KEY (`ID_filter`) REFERENCES `filter` (`ID`);
 

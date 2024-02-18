@@ -6,7 +6,7 @@ use Models\Similar as SimilarModel;
 
 class Similar
 {
-  public function index($categories, $product_id)
+  public function index(array $categories, int $product_id)
   {
     $last_category = end($categories);
     $similar_products = SimilarModel::similarProducts($last_category, $product_id);

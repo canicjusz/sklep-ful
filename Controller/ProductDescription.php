@@ -6,7 +6,7 @@ use Models\ProductDescription as ProductDescriptionModel;
 
 class ProductDescription
 {
-  public function index($product_id)
+  public function index(int $product_id)
   {
     $general_description = ProductDescriptionModel::getGeneralDescription($product_id);
     $parameters = ProductDescriptionModel::getParameters($product_id);

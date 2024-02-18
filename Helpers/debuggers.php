@@ -1,6 +1,6 @@
 <?php
 
-function dd(...$datas): void
+function dd(mixed ...$datas): void
 {
   echo '<pre>';
   foreach($datas as $data){
@@ -12,7 +12,7 @@ function dd(...$datas): void
   die;
 }
 
-function dwd(...$datas): void
+function dwd(mixed ...$datas): void
 {
   echo '<pre>';
   foreach($datas as $data){

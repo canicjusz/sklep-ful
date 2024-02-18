@@ -1,4 +1,5 @@
 <?php
+
 namespace Core;
 
 class Middleware
@@ -26,7 +27,7 @@ class Middleware
       }
       $middleware = Middleware::get($name);
       $exception = "The callback of the '$name' middleware must be either a closure or an array with a qualified name of class, followed by a method name.";
-      $callback = Resolver::validateCallback($_ENV['MIDDLEWARE_NAMESPACE'], $middleware, $exception);
+      $callback = validateCallback($_ENV['MIDDLEWARE_NAMESPACE'], $middleware, $exception);
       call_user_func($callback, $request);
     }
   }

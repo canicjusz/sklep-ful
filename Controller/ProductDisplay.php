@@ -1,52 +1,43 @@
 <?php 
 namespace Controller;
 
-use Core\View;
+use Core\{Request,View};
 use Models\ProductDisplay as ProductDisplayModel;
 
 class ProductDisplay {
-  public function index($request, $category)
+  public function index(Request $request)
   {
-    $manufacturer = $request->input['manufacturer'] ?? '';
-    $colors = $request->input['colors'] ?? '';
-    $min_price = $request->input['min'] ?? '';
-    $max_price = $request->input['max'] ?? '';
-    $pp = $request->input['pp'] ?? 5;
-    $page = $request->input['page'] ?? 1;
-    $display = $request->input['display'] ?? 'grid';
-    $order_by = match($request->input['order'] ?? ''){
-      'price_asc' => 'curr_price ASC',
-      'price_desc' => 'curr_price DESC',
-      'name_desc' => 'name DESC',
-      default => 'name ASC'
-    };
-    $products_count = ProductDisplayModel::countProducts($manufacturer, $colors, $category, $min_price, $max_price);
+    $categories = $request->parameters['category'];
+    $extractedData = $request->misc['extracted_data'];
+    $categories_count = count($categories);
+    $current_category = $categories[$categories_count - 1];
 
-    $offset = ($page - 1) * $pp;
+    $products_count = ProductDisplayModel::countProducts($extractedData, $current_category);
+
+    $offset = ($extractedData['page'] - 1) * $extractedData['pp'];
 
     if($products_count <= $offset){
-      $this->fixInput($page, $offset, $pp);
+      $this->fixInput($extractedData['page'], $offset);
     }
-    $categories_joined = join('/', $request->parameters['category']);
-    // dwd($products_count);
+    $categories_joined = join('/', $categories);
     // $boundary = $page * $pp;
-    $pages_count = ceil($products_count/$pp);
-    $products = ProductDisplayModel::getProducts($order_by, $manufacturer, $colors, $category, $min_price, $max_price, $offset, $pp, $categories_joined);
-    $navigation = ProductDisplayModel::generateNavigation($pages_count, $page);
+    $pages_count = ceil($products_count/$extractedData['pp']);
+    $products = ProductDisplayModel::getProducts($current_category, $categories_joined, $extractedData['manufacturer'], $extractedData['min_price'], $extractedData['max_price'], $extractedData['colors'], $extractedData['order_by'], $offset, $extractedData['pp']);
+    $navigation = ProductDisplayModel::generateNavigation($pages_count, $extractedData['page']);
 
-    $current_index = array_search($page, $navigation);
+    $current_index = array_search($extractedData['page'], $navigation);
     $previous_page = $navigation[$current_index-1] ?? NULL;
     $next_page = $navigation[$current_index+1] ?? NULL;
 
     $variables = ['products' => $products, 'navigation' => $navigation,
-      'pp' => $pp, 'order_by' => $order_by, 'display' => $display,
+      'pp' => $extractedData['pp'], 'order_by' => $extractedData['order_by'], 'display' => $extractedData['display'],
       'previous_page' => $previous_page, 'next_page' => $next_page, 'request' => $request];
     // $request
     
     View::open('product_display.php')->load($variables);
   }
 
-  private static function fixInput(&$page, &$offset, $pp){
+  private static function fixInput(string &$page, int &$offset){
     $_GET['page'] = 1;
     $page = 1;
     $offset = 0;

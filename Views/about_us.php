@@ -1,15 +1,15 @@
 <?php $head->css('about_us.css', true); ?>
     <section class="whyUs">
-        <img src="<?= local_photo($about_us['image_name']) ?>" alt="" class="whyUs__img">
+        <img src="<?= local_photo($image_name) ?>" alt="" class="whyUs__img">
         <div class="whyUs__content">
-            <h3 class="whyUs__heading"><?= $about_us['title'] ?>
+            <h3 class="whyUs__heading"><?= $title ?>
 </h3>
             <div class="whyUs__line">
                 <hr class="whyUs__lineColorRed">
                 <hr class="whyUs__lineColorWhite">
             </div>
             <p class="whyUs__paragraph">
-            <?= $about_us['description'] ?>
+            <?= $description ?>
             </p>
             <ul class="whyUs__list">
                 <li class="whyUs__listItem">
@@ -27,7 +27,7 @@
             </ul>
             <button class="whyUs__btn">
                 <span class="whyUs__btnSpan">
-                    <a href="<?= $about_us['link'] ?>" class="whyUs__btnSpanAnchor">informacje o firmie</a>
+                    <a href="<?= $link ?>" class="whyUs__btnSpanAnchor">informacje o firmie</a>
                 </span>
             </button>
         </div>

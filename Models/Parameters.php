@@ -1,12 +1,15 @@
 <?php
 namespace Models;
 
-use Core\Database;
+use Core\QueryBuilder;
 
 class Parameters{
-  private static function get(){
-    $query = "SELECT value, parameter FROM parameter_value";
-    $result = Database::getInstance()->query($query);
+  public static function getParameters(){
+    $result = QueryBuilder::select(['value', 'parameter'])
+      ->from('parameter_value')
+      ->execute(); 
+    // "SELECT value, parameter FROM parameter_value";
+    // $result = Database::getInstance()->query($query);
     $fetched = $result -> fetch_assoc();
     return $fetched;
   }

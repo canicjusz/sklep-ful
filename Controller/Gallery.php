@@ -9,7 +9,9 @@ class Gallery
 
   public function index()
   {
-    $variables = GalleryModel::get();
+    $banners = GalleryModel::homeBanners();
+    $tiles = GalleryModel::homeTiles();
+    $variables = ['home_tiles' => $tiles , 'home_top' => $banners];
     View::open('gallery.php')->load($variables);
   }
 }

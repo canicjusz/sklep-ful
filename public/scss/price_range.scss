@@ -64,12 +64,12 @@ price-range {
         background: #F74137;
       }
     
-      &--max{
+      &--top{
         position: absolute;
         left: 0;
       }
     
-      &.range__input--min{
+      &.range__input--bottom{
         position: relative;
     
         &::before{
@@ -85,7 +85,7 @@ price-range {
         }
       }
     
-      &.range__input--max{
+      &.range__input--top{
         &::-webkit-slider-thumb{
           z-index: 2;
         }
@@ -108,7 +108,7 @@ price-range {
       padding: 10px 5px;
       
 
-      &--max {
+      &--top {
         position: absolute;
         right: 10px;
       }

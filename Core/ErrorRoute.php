@@ -32,11 +32,11 @@ class ErrorRoute {
     return $this;
   }
 
-  static public function getRoute(int $code){
+  static public function getRoute(int $code): ErrorRoute|null {
     return self::$routes[$code] ?? null;
   }
 
-  static public function resolve(int $code, $message = null): void
+  static public function resolve(int $code, string|null $message = null): void
   {
     // dwd($_SERVER["SERVER_PROTOCOL"] . " " . ($message ?? $code);
     $message ??= $_SERVER["SERVER_PROTOCOL"] . " " . $code;
@@ -45,8 +45,7 @@ class ErrorRoute {
       new \Exception("Error route for code $code doesn't exist.");
     }
     $exception = "The callback of the.";
-    Middleware::resolve($route->middlewares);
-    $callback = Resolver::validateCallback($_ENV['CONTROLLER_NAMESPACE'], $route->controller, $exception);
+    $callback = validateCallback($_ENV['CONTROLLER_NAMESPACE'], $route->controller, $exception);
     call_user_func($callback);
   }
 }

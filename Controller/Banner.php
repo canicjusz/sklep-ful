@@ -7,7 +7,7 @@ use Models\Banner as BannerModel;
 class Banner {
   public function index()
   {
-    $variables = BannerModel::get();
-    View::open('banner.php')->load($variables);
+    $banner = BannerModel::getBanner();
+    View::open('banner.php')->load($banner);
   }
 }

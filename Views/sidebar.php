@@ -7,6 +7,11 @@
     ->script('manufacturer_checkbox.js', true)->script('color_selector.js', true)
     ->script('price_range.js', true);
   // dwd($categories);
+  define('MAX_VISIBLE_MANUFACTURERS', 5);
+  $extractedData = $request->misc['extracted_data'];
+  $selected_colors = $extractedData['colors'];
+  $manufacturer_request = clone $request;
+  $manufacturer_keys = array_keys($manufacturers);
 ?>
 
 <div class="sidebar__superglue">
@@ -43,8 +48,25 @@
     </ul>
 </aside>
 
-<div class="filtry"><div class="appliedfilters__text">FILTRY</div></div>
-<div class="filtry-container">
+<div class="filtry">
+  <h2 class="appliedfilters__text">FILTRY</h2>
+  <?php foreach($filters as $filter_id => $filter): ?>
+    <div class="filter" id="filter-<?= $filter_id ?>">
+      <h3 class="filter__title"><?= $filter['name'] ?></h3>
+      <?php 
+        switch($filter['type']):
+          case 'color': ?>
+            <color-selector data-selected="<?= $selected_colors ?>" class="color-selector">
+              <?php foreach($filter['values'] as $value_id => $value): ?>
+                <li slot="item" class="color-selector__list-item" data-value-id="<?= $value_id ?>" data-value="<?= $value ?>"></li>
+              <?php endforeach; ?>
+            </color-selector>
+      <?php
+        break; endswitch; ?>
+    </div>
+  <?php endforeach; ?>
+</div>
+<!-- <div class="filtry-container">
 <div class="word-container">
     <span class="word">Parametr</span>
     <span class="remove-button icon-x" data-word="Parametr"></span>
@@ -57,13 +79,14 @@
     <span class="word">Parametr</span>
     <span class="remove-button icon-x" data-word="Parametr"></span>
 </div>
-</div>
+</div> -->
 
 <div class="producent">
 
     <div class="producent__title">Producent</div>
 
-
+        <?php
+        for($i = 0; $i < MAX_VISIBLE_MANUFACTURERS && $i < count($manufacturers); $i++): $manufacturer = $manufacturers[$manufacturer_keys[$i]]; ?>
           <div class="producent__parametr">
             <div class="producent__checkbox">
               <label class="checkbox__container">
@@ -73,155 +96,34 @@
                   </span>
               </label>
             </div>
-            <div class="producent__nazwa">oaza-memow.pl</div>
+            <div class="producent__nazwa"><?= $manufacturer['name'] ?> <span><?=$manufacturer['products_amount'] ?></span></div>
           </div>
-
-          <div class="producent__parametr">
-            <div class="producent__checkbox">
-              <label class="checkbox__container">
-                  <input type="checkbox">
-                  <span class="checkmark">
-                      <span class="checkmark2"></span>
-                  </span>
-              </label>
-            </div>
-            <div class="producent__nazwa">oaza-memow.pl</div>
-          </div>
-
-          <div class="producent__parametr">
-            <div class="producent__checkbox">
-              <label class="checkbox__container">
-                  <input type="checkbox">
-                  <span class="checkmark">
-                      <span class="checkmark2"></span>
-                  </span>
-              </label>
-            </div>
-            <div class="producent__nazwa">oaza-memow.pl</div>
-          </div>
-
-          <div class="producent__parametr">
-            <div class="producent__checkbox">
-              <label class="checkbox__container">
-                  <input type="checkbox">
-                  <span class="checkmark">
-                      <span class="checkmark2"></span>
-                  </span>
-              </label>
-            </div>
-            <div class="producent__nazwa">oaza-memow.pl</div>
-          </div>
-
-          <div class="producent__parametr">
-            <div class="producent__checkbox">
-              <label class="checkbox__container">
-                  <input type="checkbox">
-                  <span class="checkmark">
-                      <span class="checkmark2"></span>
-                  </span>
-              </label>
-            </div>
-            <div class="producent__nazwa">oaza-memow.pl</div>
-          </div>
-
-
-
-              <div class="producent__container hidden">
-            
-                    <div class="producent__parametr">
-                      <div class="producent__checkbox">
-                        <label class="checkbox__container">
-                            <input type="checkbox">
-                            <span class="checkmark">
-                                <span class="checkmark2"></span>
-                            </span>
-                        </label>
-                      </div>
-                      <div class="producent__nazwa">Parametr</div>
-                    </div>
-
-                    <div class="producent__parametr">
-                      <div class="producent__checkbox">
-                        <label class="checkbox__container">
-                            <input type="checkbox">
-                            <span class="checkmark">
-                                <span class="checkmark2"></span>
-                            </span>
-                        </label>
-                      </div>
-                      <div class="producent__nazwa">Parametr</div>
-                    </div>
-
-                    <div class="producent__parametr">
-                      <div class="producent__checkbox">
-                        <label class="checkbox__container">
-                            <input type="checkbox">
-                            <span class="checkmark">
-                                <span class="checkmark2"></span>
-                            </span>
-                        </label>
-                      </div>
-                      <div class="producent__nazwa">Parametr</div>
-                    </div>
-
-                    <div class="producent__parametr">
-                      <div class="producent__checkbox">
-                        <label class="checkbox__container">
-                            <input type="checkbox">
-                            <span class="checkmark">
-                                <span class="checkmark2"></span>
-                            </span>
-                        </label>
-                      </div>
-                      <div class="producent__nazwa">Parametr</div>
-                    </div>
-
-                    <div class="producent__parametr">
-                      <div class="producent__checkbox">
-                        <label class="checkbox__container">
-                            <input type="checkbox">
-                            <span class="checkmark">
-                                <span class="checkmark2"></span>
-                            </span>
-                        </label>
-                      </div>
-                      <div class="producent__nazwa">Parametr</div>
-                    </div>
-
-                    <div class="producent__parametr">
-                      <div class="producent__checkbox">
-                        <label class="checkbox__container">
-                            <input type="checkbox">
-                            <span class="checkmark">
-                                <span class="checkmark2"></span>
-                            </span>
-                        </label>
-                      </div>
-                      <div class="producent__nazwa">Parametr</div>
-                    </div>
-
-                    <div class="producent__parametr">
-                      <div class="producent__checkbox">
-                        <label class="checkbox__container">
-                            <input type="checkbox">
-                            <span class="checkmark">
-                                <span class="checkmark2"></span>
-                            </span>
-                        </label>
-                      </div>
-                      <div class="producent__nazwa">Parametr</div>
-                    </div>
-
-              </div>
-
-
-      
+        <?php endfor; ?>
+      <?php if (MAX_VISIBLE_MANUFACTURERS === $i): ?>
       <div class="show-more">
-          <p id="showMoreButton">więcej (liczba)</p>
+          <p id="showMoreButton">więcej (<?= $i - MAX_VISIBLE_MANUFACTURERS ?>)</p>
       </div>
+      <?php endif; ?>
+      <?php for(; $i < count($manufacturers); $i++): $manufacturer = $manufacturers[$manufacturer_keys[$i]]; ?>
+          <div class="producent__parametr">
+            <div class="producent__checkbox">
+              <label class="checkbox__container">
+                  <input type="checkbox">
+                  <span class="checkmark">
+                      <span class="checkmark2"></span>
+                  </span>
+              </label>
+            </div>
+            <div class="producent__nazwa"><?= $manufacturer['name'] ?> <span><?=$manufacturer['products_amount'] ?></span></div>
+          </div>
+        <?php endfor; ?>
 
 </div>
-
+    <div class="pricerange__borders">
+        <div class="pricerange__title">CENA</div>
+        <price-range data-bottom-value="<?= $price_range['min'] ?>" data-top-value="<?= $price_range['max'] ?>" class="range"></price-range>
+    </div>
+</div>
 <template id="color-selector">
 <div class="color__title">
   <div class="color__titlehelp">
@@ -234,38 +136,13 @@
   </ul>
 </div>
 </template>
-
-    <div class="color__selector">
-        <color-selector class="color-selector" data-selected="1">
-            <li slot="item" class="color-selector__list-item" data-value="1">black</li>
-            <li slot="item" class="color-selector__list-item" data-value="2">red</li>
-            <li slot="item" class="color-selector__list-item" data-value="3">green</li>
-            <li slot="item" class="color-selector__list-item" data-value="4">blue</li>
-            <li slot="item" class="color-selector__list-item" data-value="1">black</li>
-            <li slot="item" class="color-selector__list-item" data-value="2">red</li>
-            <li slot="item" class="color-selector__list-item" data-value="3">green</li>
-            <li slot="item" class="color-selector__list-item" data-value="4">blue</li>
-            <li slot="item" class="color-selector__list-item" data-value="1">black</li>
-            <li slot="item" class="color-selector__list-item" data-value="2">red</li>
-            <li slot="item" class="color-selector__list-item" data-value="3">green</li>
-            <li slot="item" class="color-selector__list-item" data-value="4">blue</li>
-            <li slot="item" class="color-selector__list-item" data-value="1">black</li>
-            <li slot="item" class="color-selector__list-item" data-value="2">red</li>
-            <li slot="item" class="color-selector__list-item" data-value="3">green</li>
-        </color-selector> 
-    </div> 
 <template id="range">
   <div class="range__container">
-    <input type="range" class="range__input range__input--min">
-    <input type="range" class="range__input range__input--max">
+    <input type="range" class="range__input range__input--bottom">
+    <input type="range" class="range__input range__input--top">
   </div>
-  <input type="number" class="range__value range__value--min">
-  <input type="number" class="range__value range__value--max">
+  <input type="number" class="range__value range__value--bottom">
+  <input type="number" class="range__value range__value--top">
   <div class="range__track-disabler"></div>
   <div class="range__track"></div>
 </template>
-    <div class="pricerange__borders">
-        <div class="pricerange__title">CENA</div>
-        <price-range data-min="1" data-max="100" class="range"></price-range>
-    </div>
-</div>

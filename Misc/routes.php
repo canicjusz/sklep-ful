@@ -1,24 +1,21 @@
 <?php
+
 use Core\{Route, View, ErrorRoute, Request};
+use Controller\{Home, Catalog, Product};
 // use Controller\UserController;
 Route::get(
   '/',
   // function () {
-//   echo 'siema';
-// }
+  //   echo 'siema';
+  // }
   [Home::class, 'index']
 );
 
-Route::getDynamic(
+Route::get(
   '/catalog/{category[]}',
   [Catalog::class, 'index'],
   ['category' => '[0-9]+']
-)->middleware('redirectCategory');
-
-// Route::get(
-//   '/product/{category[]?}/{product}',
-//   [Product::class, 'index']
-// );
+)->middleware('redirectCategory')->middleware('extractCatalogPageData');
 
 // http://localhost/sklep-ful/product/3/65/654/elo/2/34/hej
 // http://localhost/sklep-ful/product/3/65/654/elo/2/34/434/hej
@@ -36,7 +33,7 @@ Route::getDynamic(
 // ((?:\/\d+)+?) - multi select parametr
 // ((?:\/\d+)+?)? - multi select parametr opcjonalny
 
-Route::getDynamic(
+Route::get(
   '/product/{category[]?}/{product}',
   [Product::class, 'index'],
   ['category' => '[0-9]+', 'product' => '[0-9]+']

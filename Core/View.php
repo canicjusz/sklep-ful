@@ -13,18 +13,18 @@ class View
     $this->dir = '';
   }
 
-  static public function open(string $file)
+  static public function open(string $file): self
   {
     $current_class = get_called_class();
     return new $current_class($file);
   }
 
-  public function in(string $dir){
+  public function in(string $dir): self {
     $this->dir = $dir;
     return $this;
   }
 
-  public function load($variables = []){
+  public function load(array $variables = []): void {
     $head = new Head();
     extract($variables);
     require static::PATH . $this->dir . '/' . $this->file;
@@ -33,7 +33,7 @@ class View
     }
   }
 
-  public function renderString($variables = []){
+  public function renderString(array $variables = []): string{
     ob_start();
     $this->load($variables);
     return ob_get_clean();

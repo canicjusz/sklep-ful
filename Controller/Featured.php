@@ -8,7 +8,8 @@ class Featured
 {
   public function index()
   {
-    $variables = FeaturedModel::get();
+    $featured_array = FeaturedModel::getFeaturedProducts();
+    $variables = ['featured' => $featured_array];
     View::open('featured.php')->load($variables);
   }
 }

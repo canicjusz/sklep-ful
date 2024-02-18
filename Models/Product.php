@@ -3,78 +3,90 @@
 namespace Models;
 
 use Core\QueryBuilder;
+use Models\Category;
 
-class ProductDisplay
+class Product
 {
-  // function __construct(){
-  //   global $mysqli;
-  //   $mysqli = $mysqli;
-  //   $products_per_page = $GLOBALS['query_pp'] ?? 5;
-  //   $page = $GLOBALS['query_p'] ?? 1;
-  //   $offset = ($page - 1) * $products_per_page;
-  //   $boundary = $page * $products_per_page;
-  //   $category = $GLOBALS['catalog_id'] ?? '';
-  //   $manufacturer = $GLOBALS['query_m'] ?? '';
-  //   $colors = $GLOBALS['query_c'] ?? '';
-  //   $min_price = $GLOBALS['query_min'] ?? '';
-  //   $max_price = $GLOBALS['query_max'] ?? '';
-  //   $display_variation = $GLOBALS['query_d'] ?? 'grid';
-  //   $order_by = match($GLOBALS['query_o'] ?? ''){
-  //     'price_asc' => 'curr_price ASC',
-  //     'price_desc' => 'curr_price DESC',
-  //     'name_desc' => 'name DESC',
-  //     default => 'name ASC'
-  //   };
-  // }
-
-  public static function childrenCategories($parent_category)
+  public static function getSimilar($category, $product_id)
   {
-    $result =
-      QueryBuilder::with('cte')
-      ->following(QueryBuilder::select(['array' => 'GROUP_CONCAT(id)'])->from('cte'))
+    $similar_product_array = [];
+    $optional_cte = QueryBuilder::with('cte')
+      ->following(QueryBuilder::select(['GROUP_CONCAT(DISTINCT CONCAT(' . ', id, ' . '))'])->from('cte'))
       ->recursive(
-        QueryBuilder::select(['id', 'name', 'parent'])->from('category')->where('id=?', [$parent_category]),
+        QueryBuilder::select(['id', 'name', 'parent'])->from('category')->where('id=?', [$category]),
         QueryBuilder::select(['c.id', 'c.name', 'c.parent'])->from('category', 'c')->join('cte', '', 'c.parent = cte.id')
-      )
-      ->execute();
-
-    // ['array'=>'GROUP_CONCAT(id)'])
-    //   ->from(
-    //     QueryBuilder::with('cte')
-    //       ->recursive(
-    //         QueryBuilder::select(['id', 'name', 'parent'])->from('category')->where('id=?',[$parent_category]),
-    //         QueryBuilder::select(['c.id', 'c.name', 'c.parent'])->from('category', 'c')->join('cte', '', 'c.parent = cte.id')->where('id=?',[$parent_category])
-    //         )
-    //     )
-    // "with recursive cte (id, name, parent) as (select id, name, parent from category
-    // where id = ? union all select c.id, c.name, c.parent from category c 
-    // inner join cte on c.parent = cte.id) select GROUP_CONCAT(id) as array from cte;";
-    // $result = Database::getInstance()->execute_query($query, [$parent_category]);
-    $fetched = $result->fetch_assoc();
-    return '(' . $fetched['array'] . ')';
-  }
-
-  public static function get_filter_values($product_ids)
-  {
-    $result = QueryBuilder::select(['product_ID' => 'p.ID', 'filter_ID' => 'f_v.ID_filter', 'values_array' => 'GROUP_CONCAT(DISTINCT CONCAT(f_v.value))'])
-      ->from('filter_value', 'f_v')
-      ->join('product_filter_value', 'p_f_v', 'p_f_v.filter_value_ID = f_v.ID')
-      ->join('product', 'p', 'p_f_v.product_ID = p.ID')
-      ->where('p.ID in ?', [$parent_category])
-      ->execute();
-    // $query = "SELECT p.ID as product_ID, f_v.ID_filter as filter_ID, GROUP_CONCAT(DISTINCT CONCAT(f_v.value)) as values_array FROM filter_value as f_v 
-    //   JOIN product_filter_value as p_f_v ON p_f_v.filter_value_ID = f_v.ID
-    //   JOIN product as p ON p_f_v.product_ID = p.ID
-    //   WHERE p.ID in ?
-    //   GROUP BY f_v.ID_filter, p.ID;";
-    // $result = Database::getInstance()->execute_query($query, [$parent_category]);
-    while ($fetched = $result->fetch_assoc()) {
-      $fetched['ID'] = $categories . '/' . $fetched['ID'];
-      $products[] = $fetched;
+      )->getQuery();
+    $unfinished_query = QueryBuilder::select([
+      'p.ID', 'p.name', 'p.promo_price', 'p.catalog_price', 'p.serial_number', 'p.stock', 'c.ID',
+      'flag_names' => 'GROUP_CONCAT(DISTINCT f.name)',
+      'image_name' => QueryBuilder::select(['p_i.image_name'])
+        ->from('product_image', 'p_i')
+        ->where('p_i.product_ID = p.ID')
+        ->orderBy('p_i.main', 'DESC')
+        ->limit(1)
+    ])
+      ->from('product', 'p')
+      ->join('product_flag', 'p_f', 'p_f.product_ID = p.ID')
+      ->join('flag', 'f', 'p_f.flag_ID = f.ID')
+      ->join('product_category', 'p_c', 'p_c.product_ID = p.ID')
+      ->join('category', 'c', 'c.ID = p_c.category_ID')
+      ->where('p.visible = true')
+      ->andWhere('p.stock > 0')
+      ->andWhere('p.ID != ?', [$product_id])
+      ->groupBy('p.ID');
+    if (isset($category)) {
+      $result = $unfinished_query->having("$optional_cte LIKE CONCAT('%.', category, '.%')")->limit(15)->execute();
+    } else {
+      $result = $unfinished_query->limit(15)->execute();
     }
+    //    $query = "SELECT p.ID, p.name, p.promo_price, p.catalog_price, p.serial_number, p.stock, c.ID as category,
+    //    GROUP_CONCAT(DISTINCT f.name) as flag_names,
+    //    (select p_i.image_name from product_image as p_i 
+    //      where p_i.product_ID = p.ID ORDER BY p_i.main DESC LIMIT 1) as image_name 
+    //    FROM product as p 
+    //      JOIN product_flag as p_f on p_f.product_ID = p.ID JOIN flag as f on p_f.flag_ID = f.ID 
+    //      JOIN product_category as p_c on p_c.product_ID = p.ID JOIN category as c on c.ID = p_c.category_ID
+    //        WHERE p.visible = true AND p.stock > 0 AND p.ID != ?
+    //        GROUP BY p.ID HAVING (? = '' OR (with recursive cte (id, name, parent) as (select id, name, parent from category
+    //              where id = ? union all select c.id, c.name, c.parent from category c 
+    //              inner join cte on c.parent = cte.id
+    //          ) select GROUP_CONCAT(DISTINCT CONCAT('.', id, '.')) from cte) LIKE CONCAT('%.', category, '.%')) 
+    //            LIMIT 15;";
+    // dwd($product_id, $category);
+    //$result = Database::getInstance()->execute_query($query, [$product_id, $category, $category]);
+    while ($fetched = $result->fetch_assoc()) {
+      $similar_product_array[] = $fetched;
+    }
+    return $similar_product_array;
   }
-
-  public static function getProducts($category, $categories_joined, $manufacturer, $min_price, $max_price, $colors, $order_by, $offset, $amount)
+  public static function getManyIDs($category, $manufacturer, $max_price, $min_price)
+  {
+    $children_categories_array = ProductDisplay::childrenCategories($category);
+    $exists_promo_flag = QueryBuilder::exists('product_flag', 'p_f')
+      ->join('flag', 'f', 'f.ID=p_f.flag_ID')
+      ->where("f.name='promo'")
+      ->andWhere('p_f.product_ID=p.ID')
+      ->getQuery();
+    $result = QueryBuilder::select(['array' => 'GROUP_CONCAT(p.ID)'])
+      ->from('product', 'p')
+      ->join(QueryBuilder::select(['product_ID', 'category_ID'])->from('product_category')->optionalWhere('product_category.category_ID IN ?', [$children_categories_array]), 'p_c', 'p_c.product_ID = p.ID')
+      ->join('category', 'c', 'c.ID=p_c.category_ID')
+      ->join(QueryBuilder::select(['ID'])->from('manufacturer')->optionalWhere('manufacturer.ID=?', [$manufacturer]), 'm', 'm.ID=p.manufacturer_ID')
+      ->andOptionalWhere("IF($exists_promo_flag, promo_price, catalog_price) BETWEEN ? AND ?", [$min_price, $max_price])->execute();
+    //     $query = "SELECT GROUP_CONCAT(p.ID) as array
+    //   FROM product as p
+    //   JOIN
+    // (SELECT product_ID, category_ID FROM product_category" . Database::optional("WHERE product_category.category_ID IN ?", $children_categories_array) . ") as p_c ON p_c.product_ID = p.ID
+    //           JOIN category as c ON c.ID = p_c.category_ID
+    //           JOIN 
+    //             (SELECT ID FROM manufacturer" . Database::optional("WHERE manufacturer.ID = ?", $manufacturer) . ") as m ON m.ID = p.manufacturer_ID
+    //           WHERE p.visible = true AND p.stock > 0"
+    //       . Database::optional("AND IF(EXISTS (SELECT * FROM product_flag as p_f JOIN flag as f ON f.ID=p_f.flag_ID WHERE f.name='promo' AND p_f.product_ID=p.ID), promo_price, catalog_price) BETWEEN ? AND ?", $min_price, $max_price) . ";";
+    // $result = Database::getInstance()->query($query);
+    $fetched = $result->fetch_assoc();
+    return isset($fetched['array']) && strlen($fetched['array']) ? '(' . $fetched['array'] . ')' : null;
+  }
+  public static function getMany($category, $categories_joined, $manufacturer, $min_price, $max_price, $colors, $order_by, $offset, $amount)
   {
     $order_by_transcribed = match ($order_by) {
       'price_asc' => 'curr_price ASC',
@@ -83,7 +95,7 @@ class ProductDisplay
       default => 'name ASC'
     };
     $products = [];
-    $children_categories_array = static::childrenCategories($category);
+    $children_categories_array = Category::getChildren($category);
     // $get_all_imgs
 
     $exists_promo_flag = QueryBuilder::exists('product_flag', 'p_f')
@@ -127,8 +139,6 @@ class ProductDisplay
       ->orderBy($order_by_transcribed)
       ->limit($offset, $amount)
       ->execute();
-
-    dwd('hejka');
     // $query = "
     // SELECT sq.ID, sq.name, sq.promo_price, sq.catalog_price, sq.serial_number, sq.stock,
     //   IF(GROUP_CONCAT(DISTINCT fl.name) LIKE '%promo%', promo_price, catalog_price) as curr_price,
@@ -250,11 +260,10 @@ class ProductDisplay
     //         LIMIT ?, ?;";
     //dac do where we wczesniejszym selekcie tym as p, where , stokc, visible, manufacturer, curr_price
   }
-
-  public static function countProducts($extractedData, $category)
+  public static function count($extractedData, $category)
   {
     extract($extractedData);
-    $children_categories_array = static::childrenCategories($category);
+    $children_categories_array = Category::getChildren($category);
 
     $exists_promo_flag = QueryBuilder::exists('product_flag', 'p_f')
       ->join('flag', 'f', 'f.ID=p_f.flag_ID')
@@ -313,32 +322,96 @@ class ProductDisplay
     $fetched = $result->fetch_assoc();
     return $fetched['count'];
   }
-
-  public static function generateNavigation($pages, $currentPage, $middle_count = 3)
+  public static function getDescription($product_id)
   {
-    if ($pages < 1) return [];
-    $visiblePages = [$currentPage];
-    while (count($visiblePages) < $pages && count($visiblePages) < $middle_count) {
-      $firstElement = $visiblePages[0];
-      $lastElement = end($visiblePages);
-      if ($firstElement > 1) {
-        array_unshift($visiblePages, $firstElement - 1);
-      }
-      if ($lastElement < $pages) {
-        $visiblePages[] = $lastElement + 1;
-      }
-    }
+    $result = QueryBuilder::select(['description', 'video_url'])
+      ->from('product')
+      ->where('ID=?', [$product_id])
+      ->execute();
+    // $query = "SELECT description, video_url FROM product WHERE ID=?;";
+    // $result = Database::getInstance()->execute_query($query, [$product_id]);
+    $fetched = $result->fetch_assoc();
+    return $fetched;
+  }
 
-    if ($visiblePages[0] == 2) {
-      array_unshift($visiblePages, 1);
-    } else if ($visiblePages[0] > 2) {
-      array_unshift($visiblePages, 1, '...');
+  public static function getParameters($product_id)
+  {
+    $result = QueryBuilder::select(['p.key', 'p_p.value'])
+      ->from('parameter', 'p')
+      ->join('product_parameter', 'p_p', 'p.ID = p_p.parameter_ID')
+      ->where('p_p.product_ID=?', [$product_id])
+      ->execute();
+    // $query = "SELECT p.key, p_p.value FROM `parameter` as p JOIN `product_parameter` as p_p ON p.ID = p_p.parameter_ID WHERE p_p.product_ID=?;";
+    // $result = Database::getInstance()->execute_query($query, [$product_id]);
+    $parameters = [];
+    while ($parameter = $result->fetch_assoc()) {
+      $parameters[] = $parameter;
     }
-    if (end($visiblePages) + 1 == $pages) {
-      $visiblePages[] = $pages;
-    } else if (end($visiblePages) + 1 < $pages) {
-      array_push($visiblePages, '...', $pages);
+    return $parameters;
+  }
+  public static function getOfferData($product_id)
+  {
+    $result = QueryBuilder::select([
+      'p.ID', 'p.name', 'p.variant_name', 'p.catalog_price', 'p.promo_price', 'delivery_name' => 'd.name', 'p.serial_number', 'p.variant_group_ID',
+      'flag_names' => 'GROUP_CONCAT(DISTINCT f.name)', 'manufacturer_name' => 'm.name', 'manufacturer_image' => 'm.image_name'
+    ])
+      ->from('product', 'p')
+      ->join('delivery', 'd', 'd.ID = p.delivery_ID')
+      ->join('product_manufacturer', 'p_m', 'p_m.product_ID = p.ID')
+      ->join('manufacturer', 'm', 'm.ID = p_m.manufacturer_ID')
+      ->leftJoin('product_flag', 'p_f', 'p_f.product_ID = p.ID')
+      ->leftJoin('flag', 'f', 'p_f.flag_ID = f.ID')
+      ->where('p.visible = true')
+      ->andWhere('p.stock > 0')
+      ->andWhere('p.ID = ?', [$product_id])
+      ->groupBy('p.ID')
+      ->execute();
+    // $query = "SELECT p.ID, p.name, p.variant_name, p.catalog_price, 
+    // p.promo_price, d.name as delivery_name, p.serial_number as serial_number, p.variant_group_ID,
+    // GROUP_CONCAT(DISTINCT f.name) as flag_names, m.name as manufacturer_name, m.image_name as manufacturer_image FROM product as p
+    //   JOIN delivery as d ON d.ID = p.delivery_ID
+    //   JOIN product_manufacturer as p_m ON p_m.product_ID = p.ID
+    //   JOIN manufacturer as m ON m.ID = p_m.manufacturer_ID
+    //   LEFT JOIN product_flag as p_f ON p_f.product_ID = p.ID
+    //   LEFT JOIN flag as f ON p_f.flag_ID = f.ID
+    //     WHERE p.visible = true AND p.stock > 0 AND p.ID = ? GROUP BY p.ID;";
+    // $result = Database::getInstance()->execute_query($query, [$product_id]);
+    $fetched = $result->fetch_assoc();
+    return $fetched;
+  }
+  public static function getFeatured()
+  {
+    $featured_array = [];
+    $result =
+      QueryBuilder::select([
+        'p.ID', 'p.name', 'p.promo_price', 'p.catalog_price', 'p.serial_number', 'p.stock',
+        'flag_names' => 'GROUP_CONCAT(DISTINCT f.name)',
+        'image_name' => QueryBuilder::select(['p_i.image_name'])
+          ->from('product_image', 'p_i')
+          ->where('p_i.product_ID = p.ID')
+          ->orderBy('p_i.main', 'DESC')
+          ->limit(1)
+      ])
+      ->from('product', 'p')
+      ->join('product_flag', 'p_f', 'p_f.product_ID = p.ID')
+      ->join('flag', 'f', 'p_f.flag_ID = f.ID')
+      ->where('p.visible = true')
+      ->andWhere('p.stock > 0')
+      ->groupBy('p.ID')
+      ->having("flag_names LIKE '%featured%'")
+      ->limit(0, 25)
+      ->execute();
+    // $query = "SELECT p.ID, p.name, p.promo_price, p.catalog_price, p.serial_number, p.stock,
+    // GROUP_CONCAT(DISTINCT f.name) as flag_names,
+    // (select p_i.image_name from product_image as p_i 
+    //   where p_i.product_ID = p.ID ORDER BY p_i.main DESC LIMIT 1) as image_name 
+    // FROM product as p 
+    //   JOIN product_flag as p_f on p_f.product_ID = p.ID JOIN flag as f on p_f.flag_ID = f.ID 
+    //     WHERE p.visible = true AND p.stock > 0 GROUP BY p.ID HAVING flag_names LIKE '%featured%' LIMIT 0,25";
+    // $result = Database::getInstance()->query($query);
+    while ($fetched = $result->fetch_assoc()) {
+      $featured_array[] = $fetched;
     }
-    return $visiblePages;
+    return $featured_array;
   }
 }

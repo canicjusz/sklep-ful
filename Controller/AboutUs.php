@@ -9,7 +9,7 @@ class AboutUs
 
   public function index()
   {
-    $variables = AboutUsModel::get();
-    View::open('about_us.php')->load($variables);
+    $company_info = AboutUsModel::getCompanyInfo();
+    View::open('about_us.php')->load($company_info);
   }
 }

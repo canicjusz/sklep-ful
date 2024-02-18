@@ -25,7 +25,7 @@ class Head {
 
   public function script(string $src, bool $local = false){
     if($local){
-      $src = '/' . $_ENV['HOME_PATH'] . '/' . $_ENV['JS_PATH'] . '/' . $src;
+      $src = $_ENV['BASE_PATH'] . '/' . $_ENV['JS_PATH'] . '/' . $src;
     }
     $this->content .= "<script src='$src' defer></script>";
     return $this;
@@ -37,7 +37,7 @@ class Head {
 
   public function css(string $src, bool $local = false){
     if($local){
-      $src = '/' . $_ENV['HOME_PATH'] . '/' . $_ENV['CSS_PATH'] . '/' . $src;
+      $src = $_ENV['BASE_PATH'] . '/' . $_ENV['CSS_PATH'] . '/' . $src;
     }
     $this->content .= "<link type='text/css' rel='stylesheet' href='$src' />";
     return $this;

@@ -47,14 +47,14 @@ price-range .range__input::-moz-range-thumb {
 price-range .range__input::-moz-range-progress, price-range .range__input::-ms-fill-lower {
   background: #F74137;
 }
-price-range .range__input--max {
+price-range .range__input--top {
   position: absolute;
   left: 0;
 }
-price-range .range__input.range__input--min {
+price-range .range__input.range__input--bottom {
   position: relative;
 }
-price-range .range__input.range__input--min::before {
+price-range .range__input.range__input--bottom::before {
   z-index: 1;
   height: 4px;
   top: 15px;
@@ -65,10 +65,10 @@ price-range .range__input.range__input--min::before {
   position: absolute;
   content: "";
 }
-price-range .range__input.range__input--max::-webkit-slider-thumb {
+price-range .range__input.range__input--top::-webkit-slider-thumb {
   z-index: 2;
 }
-price-range .range__input.range__input--max::after {
+price-range .range__input.range__input--top::after {
   content: "";
 }
 price-range .range__value {
@@ -82,7 +82,7 @@ price-range .range__value {
   font-size: 14px;
   padding: 10px 5px;
 }
-price-range .range__value--max {
+price-range .range__value--top {
   position: absolute;
   right: 10px;
 }

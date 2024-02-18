@@ -1,11 +1,12 @@
 <?php
 
-require 'autoloader.php';
-require 'debuggers.php';
-require 'env.php';
-require 'helpers.php';
-require 'routes.php';
-require 'middlewares.php';
+define("ROOT_PATH", __DIR__);
+
+require 'Helpers/index.php';
+require 'Core/autoloader.php';
+require 'Misc/env.php';
+require 'Misc/routes.php';
+require 'Misc/middlewares.php';
 
 use Core\{Route, Database};
 

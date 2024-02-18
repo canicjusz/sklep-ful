@@ -6,9 +6,12 @@ use Models\Offer as OfferModel;
 
 class Offer
 {
-  public function index($product_id)
+  public function index(int $product_id)
   {
-    $variables = OfferModel::get($product_id);
+    $horizontal = static::horizontalCarouselImage($id);
+		$vertical = static::verticalCarouselImage($id);
+		$product_offer = static::productOffer($id);
+    $variables = ['horizontal' => $horizontal, 'vertical' => $vertical, 'product_offer' => $product_offer];
     View::open('offer.php')->load($variables);
   }
 }

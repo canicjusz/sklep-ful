@@ -5,9 +5,10 @@ use Core\View;
 use Models\CategoryDescription as CategoryDescriptionModel;
 
 class CategoryDescription {
-  public function index($current_id)
+  public function index(int $current_id)
   {
-    $variables = CategoryDescriptionModel::get($current_id);
+    $description = CategoryDescriptionModel::getCategoryDescription($current_id);
+    $variables = ['category_description' => $description];
     View::open('category_description.php')->load($variables);
   }
 }

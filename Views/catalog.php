@@ -10,6 +10,8 @@
   $categories = $request->parameters['category'];
 
   $head->css('catalog.css', true);
+  $categories_count = count($categories);
+  $current_id = $categories[$categories_count - 1];
 ?>
 
 <?php 
@@ -18,18 +20,20 @@
 ?>
 
 <main>
-  <?php $sidebar->index($categories, $request->input);
+  <?php 
+    // dwd('xD',$colors);
+  // $sidebar->index($categories, $request->input);
+  $sidebar->index($request, $categories, $current_id);
   ?>
   <div class="left-wrapper">
     <?php
       $parent_index = count($categories) - 2;
       $parent_id = $parent_index >= 0 ? $categories[$parent_index] : null;
-      $current_id = end($categories);
       // dwd()
       $category_description->index($current_id);
       $category_selector->index($current_id, $parent_id);
       $banner->index();
-      $product_display->index($request, $current_id);
+      $product_display->index($request);
     ?>
   </div>
 </main>

@@ -1,0 +1,70 @@
+SELECT xD.ID, xD.name, xD.manufacturer_ID FROM (SELECT p.ID, p.name, p.manufacturer_ID from product as p WHERE p.visible = true AND p.stock > 0) as xD JOIN (SELECT ID FROM manufacturer as m WHERE m.ID = 1) as xD2 ON xD2.ID = xD.manufacturer_ID;
+
+
+SELECT xD.ID, xD.name, xD.manufacturer_ID from product as xD JOIN (SELECT ID FROM manufacturer as m WHERE m.ID = 1) as xD2 ON xD2.ID = xD.manufacturer_ID WHERE xD.visible = true AND xD.stock > 0;
+
+EXPLAIN SELECT p.ID, 
+    GROUP_CONCAT(fl.name SEPARATOR ', ') as flag_names,
+    (select p_i.image_name from product_image as p_i where p_i.product_ID = p.ID ORDER BY p_i.main DESC LIMIT 1) as image_name,
+    IF(GROUP_CONCAT(fl.name SEPARATOR ', ') LIKE '%promo%', promo_price, catalog_price) as curr_price,
+      p.manufacturer_ID, p.name, p.promo_price, p.catalog_price, p.serial_number, p.stock FROM (SELECT p.manufacturer_ID, p.ID, p.name, p.promo_price, p.catalog_price, p.serial_number, p.stock,
+    c.id as category
+    FROM product as p
+      JOIN product_category as p_c ON p_c.product_ID = p.ID
+      JOIN category as c ON c.ID = p_c.category_ID GROUP BY p.ID) as p
+        LEFT JOIN product_flag as p_f on p_f.product_ID = p.ID
+        LEFT JOIN flag as fl on p_f.flag_ID = fl.ID
+        JOIN product_filter_value as p_f_v ON p_f_v.product_ID = p.ID
+        JOIN filter_value as f_v ON f_v.ID = p_f_v.filter_value_ID
+        JOIN filter as f ON f.ID = f_v.ID_filter
+        JOIN manufacturer as m ON m.ID = p.manufacturer_ID GROUP BY p.ID;
+
+
+
+EXPLAIN SELECT xD.ID, xD.name, xD.promo_price, xD.catalog_price, xD.serial_number, xD.stock,
+      GROUP_CONCAT(DISTINCT fl.name SEPARATOR ', ') as flag_names,
+      (select p_i.image_name from product_image as p_i where p_i.product_ID = xD.ID ORDER BY p_i.main DESC LIMIT 1) as image_name,
+      IF(GROUP_CONCAT(fl.name SEPARATOR ', ') LIKE '%promo%', xD.promo_price, xD.catalog_price) as curr_price FROM
+        (SELECT p.manufacturer_ID, p.ID, p.name, p.promo_price, p.catalog_price, p.serial_number, p.stock, c.id as category
+        FROM product as p
+          JOIN product_category as p_c ON p_c.product_ID = p.ID
+          JOIN category as c ON c.ID = p_c.category_ID
+          JOIN manufacturer as m ON m.ID = p.manufacturer_ID
+          JOIN product_filter_value as p_f_v ON p_f_v.product_ID = p.ID
+          JOIN filter_value as f_v ON f_v.ID = p_f_v.filter_value_ID
+          JOIN filter as f ON f.ID = f_v.ID_filter) as xD
+      LEFT JOIN product_flag as p_f on p_f.product_ID = xD.ID
+      JOIN flag as fl on p_f.flag_ID = fl.ID GROUP BY ID;
+
+SELECT xD.ID, xD.name, xD.promo_price, xD.catalog_price, xD.serial_number, xD.stock, xD.visible,
+      GROUP_CONCAT(DISTINCT fl.name SEPARATOR ', ') as flag_names,
+      (select p_i.image_name from product_image as p_i where p_i.product_ID = xD.ID ORDER BY p_i.main DESC LIMIT 1) as image_name,
+      IF(GROUP_CONCAT(fl.name SEPARATOR ', ') LIKE '%promo%', xD.promo_price, xD.catalog_price) as curr_price FROM
+        (SELECT p.visible, p.ID, p.manufacturer_ID, p.name, p.promo_price, p.catalog_price, p.serial_number, p.stock, c.id as category
+        FROM product as p
+          JOIN (SELECT product_ID, category_ID FROM product_category WHERE '1' = '' OR product_category.category_ID IN (4)) as p_c ON p_c.product_ID = p.ID
+          JOIN category as c ON c.ID = p_c.category_ID
+          JOIN (SELECT ID FROM manufacturer WHERE '1' = '' OR manufacturer.ID = 1) as m ON m.ID = p.manufacturer_ID
+          JOIN product_filter_value as p_f_v ON p_f_v.product_ID = p.ID
+          JOIN filter_value as f_v ON f_v.ID = p_f_v.filter_value_ID
+          JOIN filter as f ON f.ID = f_v.ID_filter
+          WHERE p.visible = true AND p.stock > 0) as xD
+      LEFT JOIN product_flag as p_f on p_f.product_ID = xD.ID
+      JOIN flag as fl on p_f.flag_ID = fl.ID
+      GROUP BY ID;
+
+SELECT p.ID, 
+    GROUP_CONCAT(fl.name SEPARATOR ', ') as flag_names,
+    (select p_i.image_name from product_image as p_i where p_i.product_ID = p.ID ORDER BY p_i.main DESC LIMIT 1) as image_name,
+    IF(GROUP_CONCAT(fl.name SEPARATOR ', ') LIKE '%promo%', promo_price, catalog_price) as curr_price,
+      p.manufacturer_ID, p.name, p.promo_price, p.catalog_price, p.serial_number, p.stock FROM (SELECT p.manufacturer_ID, p.ID, p.name, p.promo_price, p.catalog_price, p.serial_number, p.stock,
+    c.id as category
+    FROM product as p
+      JOIN product_category as p_c ON p_c.product_ID = p.ID
+      JOIN category as c ON c.ID = p_c.category_ID GROUP BY p.ID) as p
+        LEFT JOIN product_flag as p_f on p_f.product_ID = p.ID
+        LEFT JOIN flag as fl on p_f.flag_ID = fl.ID
+        JOIN product_filter_value as p_f_v ON p_f_v.product_ID = p.ID
+        JOIN filter_value as f_v ON f_v.ID = p_f_v.filter_value_ID
+        JOIN filter as f ON f.ID = f_v.ID_filter
+        JOIN manufacturer as m ON m.ID = p.manufacturer_ID WHERE p_c.category_ID IN (4) AND p.manufacturer_ID = 1 GROUP BY p.ID;
