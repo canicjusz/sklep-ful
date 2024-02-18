@@ -1,32 +1,30 @@
-<?php 
-  use Core\{Partial, Controller};
-  use Controller\{Offer, ProductDescription, Similar};
-  // use Controller\{Gallery, Featured, AboutUs};
+<?php
 
-  $offer = new Offer();
-  $product_description = new ProductDescription();
-  $similar = new Similar();
-  // $head->css('home.css', true)->title('Welcome home');
+use Core\{Partial, Controller};
+use Controller\{Offer, ProductDescription, Similar};
+// use Controller\{Gallery, Featured, AboutUs};
 
-  $product_id = $request->parameters['product'];
-  $categories = $request->parameters['category'];
-  // dwd($categories);
+$offer = new Offer();
+$product_description = new ProductDescription();
+$similar = new Similar();
+// $head->css('home.css', true)->title('Welcome home');
 
-  // dwd($request->parameters);
+$product_id = $request->parameters['product'];
+$categories = $request->parameters['category'];
 ?>
 <?php Partial::open('header.php')->load(); ?>
 <main>
   <?php
-    Partial::open('breadcrumbs.php')->load();
-    $offer->index($product_id);
-    $product_description->index($product_id);
-    $similar->index($categories, $product_id);
+  Partial::open('breadcrumbs.php')->load();
+  $offer->index($product_id);
+  $product_description->index($product_id);
+  $similar->index($categories, $product_id);
   ?>
 </main>
-  <?php
-    // Controller::resolve([AboutUs::class, 'index']);
-    Partial::open('footer.php')->load();
-  ?>
+<?php
+// Controller::resolve([AboutUs::class, 'index']);
+Partial::open('footer.php')->load();
+?>
 
 
 <?php 

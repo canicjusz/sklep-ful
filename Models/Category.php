@@ -12,11 +12,10 @@ class Category
       return 'Wybierz kategorię';
     }
     $result = QueryBuilder::select(['name'])->from('category')->where('ID=?', [$id])->execute();
-    // $query = "SELECT name from category where ID = ?;";
-    // $result= Database::getInstance()->execute_query($query, [$category]);
     $featched = $result->fetch_assoc();
     return $featched['name'];
   }
+
   public static function getTree($attribute_categories)
   {
     //     na górze ma być nadrzędna kategoria (główna)
@@ -37,7 +36,7 @@ class Category
         $query_part = "= ?";
         $query_arguments = [$category];
       }
-      // $attribute_categories
+
       $parent_category['name'] = static::getName($category);
 
       $do_children_exists = QueryBuilder::exists('category', 'c1')->where('c1.parent = c.ID')->getQuery();
@@ -73,6 +72,7 @@ class Category
     }
     return $category_tree;
   }
+
   public static function getRootPath($category)
   {
     $query =
@@ -83,22 +83,13 @@ class Category
         QueryBuilder::select(['c.id', 'c.name', 'c.parent'])->from('category', 'c')->join('cte', '', 'c.id = cte.parent')
       );
     $result = $query->execute();
-
-    dwd($query->getQuery());
-    //     $query = "with recursive cte (id, name, parent) as (select id, name, parent from category
-    //     where id = ? union all select c.id, c.name, c.parent from category c 
-    //     inner join cte on c.id = cte.parent)
-    // SELECT id, name, parent FROM cte";
-    //     $result = Database::getInstance()->execute_query($query, [$category]);
     $categories_ids = [];
     while ($fetched = $result->fetch_assoc()) {
       $categories_ids[] = $fetched['id'];
     }
-    dwd('categories', $categories_ids);
-    // dwd($categories_ids);
-    // $fetched = $result->fetch_assoc();
     return array_reverse($categories_ids);
   }
+
   public static function getChildrenIDs($parent_category)
   {
     $result =
@@ -109,26 +100,13 @@ class Category
         QueryBuilder::select(['c.id', 'c.name', 'c.parent'])->from('category', 'c')->join('cte', '', 'c.parent = cte.id')
       )
       ->execute();
-
-    // "with recursive cte (id, name, parent) as (select id, name, parent from category
-    // where id = ? union all select c.id, c.name, c.parent from category c 
-    // inner join cte on c.parent = cte.id) select GROUP_CONCAT(id) as array from cte;";
-    // $result = Database::getInstance()->execute_query($query, [$parent_category]);
     $fetched = $result->fetch_assoc();
     return '(' . $fetched['array'] . ')';
   }
+
   public static function getChildren(int $current_id, int|null $parent_id)
   {
     $sign = $parent_id === null ? 'IS NULL' : '= ?';
-    // if($parent_id == null){
-    //   $sign = 'IS NULL';
-    //   $arguments_arr = [];
-    // }else{
-    //   $sign = '= ?';
-    //   $arguments_arr = [$parent_id];
-    // }
-    // $query = "SELECT ID, name, image_name, description, (ID = ?) as is_current from category WHERE parent $sign;";
-    // $result= Database::getInstance()->execute_query($query, $arguments_arr);
     $result = QueryBuilder::select(['ID', 'name', 'image_name', 'description', 'is_current' => '(ID = ?)'], [$current_id])
       ->from('category')
       ->where("parent $sign", [$parent_id])
@@ -138,5 +116,16 @@ class Category
       $categories[] = $category;
     }
     return $categories;
+  }
+
+  public static function getDescription($current_id)
+  {
+    $result =
+      QueryBuilder::select(['name', 'description'])
+      ->from('category')
+      ->where('ID=?', [$current_id])
+      ->execute();
+    $fetched = $result->fetch_assoc();
+    return $fetched;
   }
 }

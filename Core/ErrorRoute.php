@@ -1,10 +1,12 @@
 <?php
+
 namespace Core;
 
-class ErrorRoute {
+class ErrorRoute
+{
   const CODE_MAP = [
     'NOT_FOUND' => 404
-  ] ;
+  ];
   static protected $routes = [];
   public $middlewares = [];
   public $controller;
@@ -32,16 +34,17 @@ class ErrorRoute {
     return $this;
   }
 
-  static public function getRoute(int $code): ErrorRoute|null {
+  static public function getRoute(int $code): ErrorRoute|null
+  {
     return self::$routes[$code] ?? null;
   }
 
   static public function resolve(int $code, string|null $message = null): void
   {
-    // dwd($_SERVER["SERVER_PROTOCOL"] . " " . ($message ?? $code);
+
     $message ??= $_SERVER["SERVER_PROTOCOL"] . " " . $code;
     header($message, true, $code);
-    if(!$route = self::getRoute($code)){
+    if (!$route = self::getRoute($code)) {
       new \Exception("Error route for code $code doesn't exist.");
     }
     $exception = "The callback of the.";

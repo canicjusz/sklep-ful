@@ -3,7 +3,9 @@
 namespace Controller;
 
 use Core\{View, Request};
-use Models\Sidebar as SidebarModel;
+use Models\Category as CategoryModel;
+use Models\Filter as FilterModel;
+use Models\Manufacturer as ManufacturerModel;
 
 class Sidebar
 {
@@ -28,16 +30,12 @@ class Sidebar
     //       }
     // ];
     //normalnie powinno być na dwa
-    $how_many = count($categories) > 2 ? 2 : 3;
     $last_three_categories = array_slice($categories, -3);
-    // dwd('hej', $last_three_categories);
+
     $manufacturers =
-      SidebarModel::getManufacturers($current_id, $extractedData['manufacturer'], $extractedData['min_price'], $extractedData['max_price'], $extractedData['colors']);
-    $filters = SidebarModel::getFilters($current_id, $extractedData['manufacturer'], $extractedData['min_price'], $extractedData['max_price']);
-    $price_range = SidebarModel::getFilters($current_id, $extractedData['manufacturer'], $extractedData['min_price'], $extractedData['max_price']);
-    $category_tree = SidebarModel::getCategories($last_three_categories);
-    dwd($extractedData);
-    // dwd($variables);
+      ManufacturerModel::getMany($current_id, $extractedData['manufacturer'], $extractedData['min_price'], $extractedData['max_price'], $extractedData['colors']);
+    $filters = FilterModel::getManyForCategory($current_id, $extractedData['manufacturer'], $extractedData['min_price'], $extractedData['max_price']);
+    $category_tree = CategoryModel::getTree($last_three_categories);
     $variables = ['filters' => $filters, 'price_range' => ['min' => $extractedData['min_price'], 'max' => $extractedData['max_price']], 'manufacturers' => $manufacturers, 'categories' => $category_tree, 'request' => $request];
     View::open('sidebar.php')->load($variables);
   }

@@ -1,15 +1,16 @@
-<?php 
+<?php
+
 namespace Controller;
 
 use Core\{View, Request};
-use Models\ProductDescription as ProductDescriptionModel;
+use Models\Product as ProductModel;
 
 class ProductDescription
 {
   public function index(int $product_id)
   {
-    $general_description = ProductDescriptionModel::getGeneralDescription($product_id);
-    $parameters = ProductDescriptionModel::getParameters($product_id);
+    $general_description = ProductModel::getDescription($product_id);
+    $parameters = ProductModel::getParameters($product_id);
     View::open('product_description.php')->load(['description' => $general_description, 'parameters' => $parameters]);
   }
 }

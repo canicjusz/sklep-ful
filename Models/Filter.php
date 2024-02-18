@@ -15,11 +15,6 @@ class Filter
       ->join('filter_value', 'f_v', 'f_v.ID = p_f_v.filter_value_ID')
       ->join('filter', 'f', 'f.ID=f_v.ID_filter')
       ->groupBy('f_v.ID')->orderBy('f.ID')->execute();
-    //$query = "SELECT f.type, f.name, f.ID as filter_ID, f_v.value, f_v.ID as value_ID
-    //      FROM (SELECT DISTINCT filter_value_ID FROM product_filter_value" . Database::optional("WHERE product_ID in ?", $products) . ") as p_f_v
-    //      JOIN filter_value as f_v ON f_v.ID = p_f_v.filter_value_ID
-    //      JOIN filter as f ON f.ID = f_v.ID_filter GROUP BY f_v.ID ORDER BY f.ID;";
-    #    $result = Database::getInstance()->query($query);
     $filters = [];
     while ($featched = $result->fetch_assoc()) {
       $filter_id = $featched['filter_ID'];

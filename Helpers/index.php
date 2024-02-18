@@ -13,7 +13,7 @@ function validateCallback(string $namespace, object|array $callback, string $exc
     $class_name = $callback[0];
     $method = $callback[1];
     $class_path = $namespace . $class_name;
-    // dwd($class_path);
+
     $class = new $class_path();
     if (!method_exists($class, $method)) {
       throw new \Exception("'$method' doesn't exist on the $class class.");

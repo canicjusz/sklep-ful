@@ -55,7 +55,6 @@ class SelectBuilder
       $column = $columns[$alias];
       if ($column instanceof SelectBuilder) {
         $column = static::convertToSubquery($column);
-        dwd('after conversion', $column);
       }
       if (!is_string($alias)) {
         $carry .= ',' . $column;
@@ -76,7 +75,6 @@ class SelectBuilder
     if ($table instanceof SelectBuilder) {
       $table = static::convertToSubquery($table);
     }
-    dwd($alias);
     $query_excerpt = isset($alias) ? "$table as $alias" : $table;
     $this->table = " FROM $query_excerpt";
     return $this;

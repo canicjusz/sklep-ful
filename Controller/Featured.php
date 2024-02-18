@@ -1,14 +1,15 @@
-<?php 
+<?php
+
 namespace Controller;
 
 use Core\View;
-use Models\Featured as FeaturedModel;
+use Models\Product as ProductModel;
 
 class Featured
 {
   public function index()
   {
-    $featured_array = FeaturedModel::getFeaturedProducts();
+    $featured_array = ProductModel::getFeatured();
     $variables = ['featured' => $featured_array];
     View::open('featured.php')->load($variables);
   }
